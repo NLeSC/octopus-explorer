@@ -15,6 +15,8 @@
  */
 package nl.esciencecenter.octopus.explorer.files;
 
+import nl.esciencecenter.octopus.explorer.OctopusExplorer;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,23 +43,23 @@ public class MimeTypeIcons {
     private static final Logger logger = LoggerFactory.getLogger(MimeTypeIcons.class);
 
     //all available icons
-    ImageIcon certificate = new ImageIcon("resources/icons/mimetypes/application-certificate.png");
-    ImageIcon executable = new ImageIcon("resources/icons/mimetypes/application-x-executable.png");
-    ImageIcon audio = new ImageIcon("resources/icons/mimetypes/audio-x-generic.png");
-    ImageIcon font = new ImageIcon("resources/icons/mimetypes/font-x-generic.png");
-    ImageIcon image = new ImageIcon("resources/icons/mimetypes/image-x-generic.png");
-    ImageIcon archive = new ImageIcon("resources/icons/mimetypes/package-x-generic.png");
-    ImageIcon html = new ImageIcon("resources/icons/mimetypes/text-html.png");
-    ImageIcon text = new ImageIcon("resources/icons/mimetypes/text-x-generic.png");
-    ImageIcon empty = new ImageIcon("resources/icons/mimetypes/text-x-generic-template.png");
-    ImageIcon script = new ImageIcon("resources/icons/mimetypes/text-x-script.png");
-    ImageIcon video = new ImageIcon("resources/icons/mimetypes/video-x-generic.png");
-    ImageIcon addressBook = new ImageIcon("resources/icons/mimetypes/x-office-address-book.png");
-    ImageIcon calendar = new ImageIcon("resources/icons/mimetypes/x-office-calendar.png");
-    ImageIcon document = new ImageIcon("resources/icons/mimetypes/x-office-document.png");
-    ImageIcon drawing = new ImageIcon("resources/icons/mimetypes/x-office-drawing.png");
-    ImageIcon presentation = new ImageIcon("resources/icons/mimetypes/x-office-presentation.png");
-    ImageIcon spreadsheet = new ImageIcon("resources/icons/mimetypes/x-office-spreadsheet.png");
+    ImageIcon certificate = OctopusExplorer.loadIcon("mimetypes/application-certificate.png");
+    ImageIcon executable = OctopusExplorer.loadIcon("mimetypes/application-x-executable.png");
+    ImageIcon audio = OctopusExplorer.loadIcon("mimetypes/audio-x-generic.png");
+    ImageIcon font = OctopusExplorer.loadIcon("mimetypes/font-x-generic.png");
+    ImageIcon image = OctopusExplorer.loadIcon("mimetypes/image-x-generic.png");
+    ImageIcon archive = OctopusExplorer.loadIcon("mimetypes/package-x-generic.png");
+    ImageIcon html = OctopusExplorer.loadIcon("mimetypes/text-html.png");
+    ImageIcon text = OctopusExplorer.loadIcon("mimetypes/text-x-generic.png");
+    ImageIcon empty = OctopusExplorer.loadIcon("mimetypes/text-x-generic-template.png");
+    ImageIcon script = OctopusExplorer.loadIcon("mimetypes/text-x-script.png");
+    ImageIcon video = OctopusExplorer.loadIcon("mimetypes/video-x-generic.png");
+    ImageIcon addressBook = OctopusExplorer.loadIcon("mimetypes/x-office-address-book.png");
+    ImageIcon calendar = OctopusExplorer.loadIcon("mimetypes/x-office-calendar.png");
+    ImageIcon document = OctopusExplorer.loadIcon("mimetypes/x-office-document.png");
+    ImageIcon drawing = OctopusExplorer.loadIcon("mimetypes/x-office-drawing.png");
+    ImageIcon presentation = OctopusExplorer.loadIcon("mimetypes/x-office-presentation.png");
+    ImageIcon spreadsheet = OctopusExplorer.loadIcon("mimetypes/x-office-spreadsheet.png");
 
     //Extension->Icon mappings
     private final Map<String, ImageIcon> icons;

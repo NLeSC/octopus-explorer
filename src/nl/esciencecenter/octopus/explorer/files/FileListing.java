@@ -21,6 +21,7 @@ import nl.esciencecenter.octopus.credentials.Credentials;
 import nl.esciencecenter.octopus.exceptions.AttributeNotSupportedException;
 import nl.esciencecenter.octopus.exceptions.OctopusException;
 import nl.esciencecenter.octopus.exceptions.OctopusIOException;
+import nl.esciencecenter.octopus.explorer.OctopusExplorer;
 import nl.esciencecenter.octopus.files.AbsolutePath;
 import nl.esciencecenter.octopus.files.DirectoryStream;
 import nl.esciencecenter.octopus.files.FileSystem;
@@ -40,9 +41,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.AbstractAction;
@@ -122,6 +121,8 @@ public class FileListing extends JPanel {
      * 
      */
     private final static class FileListingTableModel extends DefaultTableModel {
+        private static final long serialVersionUID = 1L;
+
         private static final Class[] COLUMN_TYPES = new Class[] { PathAttributesPair.class, String.class, String.class,
                 String.class };
 
@@ -158,7 +159,7 @@ public class FileListing extends JPanel {
         private final MimeTypeIcons mimeTypeIcons;
 
         LabelRenderer() throws IOException {
-            folderIcon = new ImageIcon("resources/icons/places/folder.png");
+            folderIcon = OctopusExplorer.loadIcon("places/folder.png");
             mimeTypeIcons = new MimeTypeIcons();
         }
 
@@ -409,11 +410,13 @@ public class FileListing extends JPanel {
     }
 
     private class RefreshAction extends AbstractAction {
+        private static final long serialVersionUID = 1L;
+
         public RefreshAction() {
             putValue(NAME, "Refresh");
             putValue(SHORT_DESCRIPTION, "Some short description");
 
-            Icon refreshIcon = new ImageIcon("resources/icons/actions/view-refresh.png");
+            Icon refreshIcon = OctopusExplorer.loadIcon("actions/view-refresh.png");
             putValue(SMALL_ICON, refreshIcon);
         }
 
@@ -423,11 +426,13 @@ public class FileListing extends JPanel {
     }
 
     private class UpAction extends AbstractAction {
+        private static final long serialVersionUID = 1L;
+
         public UpAction() {
             putValue(NAME, "Up");
             putValue(SHORT_DESCRIPTION, "Some short description");
 
-            Icon upIcon = new ImageIcon("resources/icons/actions/go-up.png");
+            Icon upIcon = OctopusExplorer.loadIcon("actions/go-up.png");
             putValue(SMALL_ICON, upIcon);
         }
 

@@ -28,7 +28,6 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -41,6 +40,7 @@ import javax.swing.table.JTableHeader;
 import nl.esciencecenter.octopus.Octopus;
 import nl.esciencecenter.octopus.exceptions.OctopusException;
 import nl.esciencecenter.octopus.exceptions.OctopusIOException;
+import nl.esciencecenter.octopus.explorer.OctopusExplorer;
 import nl.esciencecenter.octopus.jobs.Job;
 import nl.esciencecenter.octopus.jobs.JobStatus;
 import nl.esciencecenter.octopus.jobs.Scheduler;
@@ -159,7 +159,7 @@ public class JobListing extends JPanel {
             putValue(NAME, "Refresh");
             putValue(SHORT_DESCRIPTION, "Some short description");
 
-            Icon refreshIcon = new ImageIcon("resources/icons/actions/view-refresh.png");
+            Icon refreshIcon = OctopusExplorer.loadIcon("actions/view-refresh.png");
             putValue(SMALL_ICON, refreshIcon);
         }
 

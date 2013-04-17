@@ -25,6 +25,7 @@ import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.URL;
 
 import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
@@ -51,8 +52,20 @@ public class OctopusExplorer extends JFrame {
     private static final long serialVersionUID = 1L;
 
     final JList<String> locationList;
+    
+    public static ImageIcon loadIcon(String path) {
+        URL imgURL = null;
 
-    // Display an icon and a string for each object in the locationList.
+        if (path != null) {
+            imgURL = ClassLoader.getSystemClassLoader().getResource("resources/icons/" + path);
+        }
+
+        if (imgURL != null) {
+            return new ImageIcon(imgURL);
+        } else {
+            return null;
+        }
+    }
 
     /**
      * @author Niels Drost
@@ -143,8 +156,8 @@ public class OctopusExplorer extends JFrame {
         private ImageIcon remoteIcon;
 
         IconLabelCellRenderer() {
-            homeIcon = new ImageIcon("resources/icons/places/user-home.png");
-            remoteIcon = new ImageIcon("resources/icons/places/network-server.png");
+            homeIcon = loadIcon("places/user-home.png");
+            remoteIcon = loadIcon("places/network-server.png");
             setOpaque(true);
             setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         }
@@ -197,10 +210,10 @@ public class OctopusExplorer extends JFrame {
         final JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         splitPane.setRightComponent(tabbedPane);
 
-        ImageIcon fileIcon = new ImageIcon("resources/icons/apps/system-file-manager.png");
+        ImageIcon fileIcon = loadIcon("apps/system-file-manager.png");
         tabbedPane.addTab("Files", fileIcon, fileListing, null);
 
-        ImageIcon jobIcon = new ImageIcon("resources/icons/apps/accessories-calculator.png");
+        ImageIcon jobIcon = loadIcon("apps/accessories-calculator.png");
         tabbedPane.addTab("Jobs", jobIcon, jobListing, null);
 
         JPanel panel = new JPanel();
@@ -225,14 +238,14 @@ public class OctopusExplorer extends JFrame {
         locationList.addMouseListener(new ListPopupMouseListener(popupMenu));
 
         JMenuItem mntmAddALocation = new JMenuItem("Add a Location");
-        ImageIcon remoteIcon = new ImageIcon("resources/icons/places/network-server.png");
+        ImageIcon remoteIcon = loadIcon("places/network-server.png");
         mntmAddALocation.setIcon(remoteIcon);
         popupMenu.add(mntmAddALocation);
 
         JPanel panel_1 = new JPanel();
         panel.add(panel_1, BorderLayout.SOUTH);
 
-        ImageIcon nlescIcon = new ImageIcon("resources/eScience_center_logo_cyaan_zwart_small.png");
+        ImageIcon nlescIcon = loadIcon("nlesc-logo.png");
         JLabel lblNlescLogo = new JLabel(nlescIcon);
         panel_1.add(lblNlescLogo);
 
