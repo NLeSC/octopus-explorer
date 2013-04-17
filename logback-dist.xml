@@ -1,0 +1,17 @@
+<configuration>
+  <!-- Write octopus-explorer info, and _all_ warning and errors to stdout -->
+
+  <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+    <target>System.out</target>
+  </appender>
+
+  <root level="warn">
+    <appender-ref ref="stdout" />
+  </root>
+
+  <logger name="nl.esciencecenter.octopus.explorer" level="info" />
+
+</configuration>

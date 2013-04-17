@@ -1,0 +1,59 @@
+<project name="Octopus Explorer" default="build" basedir=".">
+	<description>
+	Build file for Octopus
+    </description>
+
+	<property name="build.sysclasspath" value="ignore" />
+
+	<property name="version" value="" />
+
+	<path id="lib.jars">
+		<fileset dir="lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<target name="build" depends="clean, compile" description="build everything" />
+
+	<target name="test" description="run the tests">
+		<ant dir="test" target="test" />
+	</target>
+
+	<target name="xml-test" description="run the tests, output to xml reports">
+		<ant dir="test" target="xml-test" />
+	</target>
+
+	<target name="compile" description="compile the source ">
+		<mkdir dir="build/classes" />
+		<mkdir dir="dist" />
+
+		<!-- Compile the java code from src into classes -->
+		<javac srcdir="src" destdir="build/classes" debug="on">
+			<classpath refid="lib.jars" />
+		</javac>
+		
+
+		<!-- Put everything in classes into the jar file -->
+		<jar jarfile="dist/octopus-explorer${version}.jar" basedir="build/classes">
+			<manifest>
+				<attribute name="Main-Class" value="nl.esciencecenter.octopus.explorer.OctopusExplorer" />
+				<attribute name="Octopus-Adaptors" value="Core" />
+			</manifest>
+			<!-- repack libraries into jar -->
+			<zipgroupfileset dir="lib" includes="*.jar" /> 
+			<!-- add resources (icons, images, etc) to jar -->
+			<zipfileset dir="resources" prefix="resources" />
+			<!-- add "distribution" logback config to jar -->
+			<zipfileset file="logback-dist.xml" fullpath="logback.xml"/>
+		</jar>
+
+	</target>
+
+	<target name="clean" description="clean up">
+		<delete dir="build" />
+		<delete dir="dist" />
+
+		<ant dir="test" target="clean" />
+	</target>
+
+</project>
