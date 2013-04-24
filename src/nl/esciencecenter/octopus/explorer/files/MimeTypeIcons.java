@@ -43,28 +43,46 @@ public class MimeTypeIcons {
     private static final Logger logger = LoggerFactory.getLogger(MimeTypeIcons.class);
 
     //all available icons
-    ImageIcon certificate = Utils.loadIcon("mimetypes/application-certificate.png");
-    ImageIcon executable = Utils.loadIcon("mimetypes/application-x-executable.png");
-    ImageIcon audio = Utils.loadIcon("mimetypes/audio-x-generic.png");
-    ImageIcon font = Utils.loadIcon("mimetypes/font-x-generic.png");
-    ImageIcon image = Utils.loadIcon("mimetypes/image-x-generic.png");
-    ImageIcon archive = Utils.loadIcon("mimetypes/package-x-generic.png");
-    ImageIcon html = Utils.loadIcon("mimetypes/text-html.png");
-    ImageIcon text = Utils.loadIcon("mimetypes/text-x-generic.png");
-    ImageIcon empty = Utils.loadIcon("mimetypes/text-x-generic-template.png");
-    ImageIcon script = Utils.loadIcon("mimetypes/text-x-script.png");
-    ImageIcon video = Utils.loadIcon("mimetypes/video-x-generic.png");
-    ImageIcon addressBook = Utils.loadIcon("mimetypes/x-office-address-book.png");
-    ImageIcon calendar = Utils.loadIcon("mimetypes/x-office-calendar.png");
-    ImageIcon document = Utils.loadIcon("mimetypes/x-office-document.png");
-    ImageIcon drawing = Utils.loadIcon("mimetypes/x-office-drawing.png");
-    ImageIcon presentation = Utils.loadIcon("mimetypes/x-office-presentation.png");
-    ImageIcon spreadsheet = Utils.loadIcon("mimetypes/x-office-spreadsheet.png");
+    //private final ImageIcon certificate;
+    private final ImageIcon executable;
+    private final ImageIcon audio;
+    private final ImageIcon font;
+    private final ImageIcon image;
+    private final ImageIcon archive;
+    private final ImageIcon html;
+    private final ImageIcon text;
+    //private final ImageIcon empty;
+    private final ImageIcon script;
+    private final ImageIcon video;
+    //private final ImageIcon addressBook;
+    private final ImageIcon calendar;
+    private final ImageIcon document;
+    private final ImageIcon drawing;
+    private final ImageIcon presentation;
+    private final ImageIcon spreadsheet;
 
     //Extension->Icon mappings
     private final Map<String, ImageIcon> icons;
 
-    public MimeTypeIcons() throws IOException {
+    public MimeTypeIcons() throws Exception {
+        //certificate = Utils.loadIcon("mimetypes/application-certificate.png");
+        executable = Utils.loadIcon("mimetypes/application-x-executable.png");
+        audio = Utils.loadIcon("mimetypes/audio-x-generic.png");
+        font = Utils.loadIcon("mimetypes/font-x-generic.png");
+        image = Utils.loadIcon("mimetypes/image-x-generic.png");
+        archive = Utils.loadIcon("mimetypes/package-x-generic.png");
+        html = Utils.loadIcon("mimetypes/text-html.png");
+        text = Utils.loadIcon("mimetypes/text-x-generic.png");
+        //empty = Utils.loadIcon("mimetypes/text-x-generic-template.png");
+        script = Utils.loadIcon("mimetypes/text-x-script.png");
+        video = Utils.loadIcon("mimetypes/video-x-generic.png");
+        //addressBook = Utils.loadIcon("mimetypes/x-office-address-book.png");
+        calendar = Utils.loadIcon("mimetypes/x-office-calendar.png");
+        document = Utils.loadIcon("mimetypes/x-office-document.png");
+        drawing = Utils.loadIcon("mimetypes/x-office-drawing.png");
+        presentation = Utils.loadIcon("mimetypes/x-office-presentation.png");
+        spreadsheet = Utils.loadIcon("mimetypes/x-office-spreadsheet.png");
+
         icons = new HashMap<String, ImageIcon>();
 
         long start = System.currentTimeMillis();

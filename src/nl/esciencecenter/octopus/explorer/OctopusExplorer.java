@@ -17,8 +17,8 @@ package nl.esciencecenter.octopus.explorer;
 
 import nl.esciencecenter.octopus.Octopus;
 import nl.esciencecenter.octopus.OctopusFactory;
-import nl.esciencecenter.octopus.explorer.files.FileListing;
-import nl.esciencecenter.octopus.explorer.jobs.JobListing;
+import nl.esciencecenter.octopus.explorer.files.FileListingPanel;
+import nl.esciencecenter.octopus.explorer.jobs.JobListingPanel;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -45,16 +45,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class OctopusExplorer extends JFrame {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(OctopusExplorer.class);
-    
+
     private static final long serialVersionUID = 1L;
 
     final JList<String> locationList;
-    
+
     /**
      * @author Niels Drost
-     *
+     * 
      */
     private final class ListPopupMouseListener extends MouseAdapter {
         private final JPopupMenu popup;
@@ -90,14 +90,14 @@ public class OctopusExplorer extends JFrame {
      * 
      */
     private final class ListMouseAdapter extends MouseAdapter {
-        private final JobListing jobListing;
-        private final FileListing fileListing;
+        private final JobListingPanel jobListing;
+        private final FileListingPanel fileListing;
 
         /**
          * @param jobListing
          * @param fileListing
          */
-        private ListMouseAdapter(JobListing jobListing, FileListing fileListing) {
+        private ListMouseAdapter(JobListingPanel jobListing, FileListingPanel fileListing) {
             this.jobListing = jobListing;
             this.fileListing = fileListing;
         }
@@ -140,7 +140,7 @@ public class OctopusExplorer extends JFrame {
         private final ImageIcon homeIcon;
         private final ImageIcon remoteIcon;
 
-        IconLabelCellRenderer() {
+        IconLabelCellRenderer() throws Exception {
             homeIcon = Utils.loadIcon("places/user-home.png");
             remoteIcon = Utils.loadIcon("places/network-server.png");
             setOpaque(true);
@@ -180,8 +180,8 @@ public class OctopusExplorer extends JFrame {
         logger.debug("Initializing Octopus Explorer");
         setTitle("Octopus Explorer [Technology Preview]");
         Octopus octopus = OctopusFactory.newOctopus(null);
-        final JobListing jobListing = new JobListing(octopus);
-        final FileListing fileListing = new FileListing(octopus);
+        final JobListingPanel jobListing = new JobListingPanel(octopus);
+        final FileListingPanel fileListing = new FileListingPanel(octopus);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 965, 735);
         JPanel contentPane = new JPanel();

@@ -34,20 +34,21 @@ import javax.swing.table.JTableHeader;
 import nl.esciencecenter.octopus.Octopus;
 import nl.esciencecenter.octopus.explorer.Utils;
 
-public class JobListing extends JPanel {
+public class JobListingPanel extends JPanel {
     private static final long serialVersionUID = 1L;
     private JTable table;
-    private final Action refreshAction = new RefreshAction();
     private final DefaultTableModel theModel;
     private UpdateJobListWorker currentTask = null;
 
     private String currentLocation = "Local";
     private final Octopus octopus;
+    private final Action refreshAction;
+    private final Action submitJobAction;
 
     public void setCurrentLocation(String location) {
         this.currentLocation = location;
     }
-    
+
     public void triggerRefresh(boolean setPathToFSEntry) {
         if (currentTask != null) {
             currentTask.cancel(false);
@@ -60,8 +61,12 @@ public class JobListing extends JPanel {
     /**
      * Create the panel.
      */
-    public JobListing(Octopus octopus) {
+    public JobListingPanel(Octopus octopus) throws Exception {
         this.octopus = octopus;
+
+        refreshAction = new RefreshAction();
+        submitJobAction = new SubmitJobAction();
+
         setLayout(new BorderLayout(0, 0));
 
         JPanel panel = new JPanel();
@@ -70,6 +75,9 @@ public class JobListing extends JPanel {
 
         JButton btnRefresh = new JButton(refreshAction);
         panel.add(btnRefresh);
+
+        JButton btnSubmitJob = new JButton(submitJobAction);
+        panel.add(btnSubmitJob);
 
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -96,9 +104,9 @@ public class JobListing extends JPanel {
     private class RefreshAction extends AbstractAction {
         private static final long serialVersionUID = 1L;
 
-        public RefreshAction() {
+        public RefreshAction() throws Exception {
             putValue(NAME, "Refresh");
-            putValue(SHORT_DESCRIPTION, "Some short description");
+            putValue(SHORT_DESCRIPTION, "Refresh the jobs list");
 
             putValue(SMALL_ICON, Utils.loadIcon("actions/view-refresh.png"));
         }
@@ -110,6 +118,20 @@ public class JobListing extends JPanel {
             theModel.setRowCount(0);
             currentTask = new UpdateJobListWorker(theModel, currentLocation, octopus);
             currentTask.execute();
+        }
+    }
+
+    private class SubmitJobAction extends AbstractAction {
+        private static final long serialVersionUID = 1L;
+
+        public SubmitJobAction() throws Exception {
+            putValue(NAME, "Submit Job");
+            putValue(SHORT_DESCRIPTION, "Submit a new Job");
+
+            putValue(SMALL_ICON, Utils.loadIcon("actions/appointment-new.png"));
+        }
+
+        public void actionPerformed(ActionEvent e) {
         }
     }
 }

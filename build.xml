@@ -42,11 +42,10 @@
 			<!-- repack libraries into jar -->
 			<zipgroupfileset dir="lib" includes="*.jar" /> 
 			<!-- add resources (icons, images, etc) to jar -->
-			<zipfileset dir="resources" prefix="resources" />
+			<zipfileset dir="resources"/>
 			<!-- add "distribution" logback config to jar -->
 			<zipfileset file="logback-dist.xml" fullpath="logback.xml"/>
 		</jar>
-
 	</target>
 
 	<target name="clean" description="clean up">

@@ -5,17 +5,13 @@ import java.net.URL;
 import javax.swing.ImageIcon;
 
 public class Utils {
-    public static ImageIcon loadIcon(String path) {
-        URL imgURL = null;
+    public static ImageIcon loadIcon(String path) throws Exception {
+        URL imgURL = Utils.class.getClassLoader().getResource("icons/" + path);
 
-        if (path != null) {
-            imgURL = ClassLoader.getSystemClassLoader().getResource("resources/icons/" + path);
+        if (imgURL == null) {
+            throw new Exception("could not find icon: " + path);
         }
 
-        if (imgURL != null) {
-            return new ImageIcon(imgURL);
-        } else {
-            return null;
-        }
+        return new ImageIcon(imgURL);
     }
 }

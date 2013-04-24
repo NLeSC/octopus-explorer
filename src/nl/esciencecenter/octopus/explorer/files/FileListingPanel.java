@@ -52,12 +52,11 @@ import nl.esciencecenter.octopus.files.RelativePath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FileListing extends JPanel {
-    private static final Logger logger = LoggerFactory.getLogger(FileListing.class);
+public class FileListingPanel extends JPanel {
+    private static final Logger logger = LoggerFactory.getLogger(FileListingPanel.class);
 
     private static final long serialVersionUID = 1L;
     private JTable table;
-    private final Action refreshAction = new RefreshAction();
     private final DefaultTableModel theModel;
     private UpdateFileListWorker currentTask = null;
 
@@ -67,7 +66,8 @@ public class FileListing extends JPanel {
 
     private final Octopus octopus;
 
-    private final Action action = new UpAction();
+    private final Action refreshAction;
+    private final Action upAction;
     
 
     /**
@@ -146,7 +146,7 @@ public class FileListing extends JPanel {
 
         private final MimeTypeIcons mimeTypeIcons;
 
-        LabelRenderer() throws IOException {
+        LabelRenderer() throws Exception {
             folderIcon = Utils.loadIcon("places/folder.png");
             mimeTypeIcons = new MimeTypeIcons();
         }
@@ -207,7 +207,12 @@ public class FileListing extends JPanel {
      * Create the panel.
      * @throws IOException 
      */
-    public FileListing(Octopus octopus) throws IOException {
+    public FileListingPanel(Octopus octopus) throws Exception {
+        refreshAction = new RefreshAction();
+        upAction = new UpAction();
+
+        
+        
         this.octopus = octopus;
         setLayout(new BorderLayout(0, 0));
 
@@ -219,7 +224,7 @@ public class FileListing extends JPanel {
         panel.add(btnRefresh);
 
         JButton btnUp = new JButton("Up");
-        btnUp.setAction(action);
+        btnUp.setAction(upAction);
         panel.add(btnUp);
 
         JScrollPane scrollPane = new JScrollPane();
@@ -302,9 +307,9 @@ public class FileListing extends JPanel {
     private class RefreshAction extends AbstractAction {
         private static final long serialVersionUID = 1L;
 
-        public RefreshAction() {
+        public RefreshAction() throws Exception {
             putValue(NAME, "Refresh");
-            putValue(SHORT_DESCRIPTION, "Some short description");
+            putValue(SHORT_DESCRIPTION, "Refresh the list of files");
 
             putValue(SMALL_ICON, Utils.loadIcon("actions/view-refresh.png"));
         }
@@ -317,9 +322,9 @@ public class FileListing extends JPanel {
     private class UpAction extends AbstractAction {
         private static final long serialVersionUID = 1L;
 
-        public UpAction() {
+        public UpAction()  throws Exception {
             putValue(NAME, "Up");
-            putValue(SHORT_DESCRIPTION, "Some short description");
+            putValue(SHORT_DESCRIPTION, "Go up into the directory hierarchy");
             
             putValue(SMALL_ICON, Utils.loadIcon("actions/go-up.png"));
         }

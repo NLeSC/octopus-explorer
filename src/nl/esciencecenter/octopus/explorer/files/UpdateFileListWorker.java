@@ -39,9 +39,9 @@ class UpdateFileListWorker extends SwingWorker<RelativePath, PathAttributesPair>
     private final RelativePath path;
     private final boolean setPathToFSEntry;
     private final Octopus octopus;
-    private final FileListing fileListing;
+    private final FileListingPanel fileListing;
 
-    UpdateFileListWorker(DefaultTableModel tableModel, String location, RelativePath path, boolean setPathToFSEntry, Octopus octopus, FileListing fileListing) {
+    UpdateFileListWorker(DefaultTableModel tableModel, String location, RelativePath path, boolean setPathToFSEntry, Octopus octopus, FileListingPanel fileListing) {
         this.tableModel = tableModel;
         this.location = location;
         this.path = path;
