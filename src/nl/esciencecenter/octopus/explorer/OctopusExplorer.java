@@ -25,7 +25,6 @@ import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.net.URL;
 
 import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
@@ -53,20 +52,6 @@ public class OctopusExplorer extends JFrame {
 
     final JList<String> locationList;
     
-    public static ImageIcon loadIcon(String path) {
-        URL imgURL = null;
-
-        if (path != null) {
-            imgURL = ClassLoader.getSystemClassLoader().getResource("resources/icons/" + path);
-        }
-
-        if (imgURL != null) {
-            return new ImageIcon(imgURL);
-        } else {
-            return null;
-        }
-    }
-
     /**
      * @author Niels Drost
      *
@@ -137,7 +122,7 @@ public class OctopusExplorer extends JFrame {
      * @author Niels Drost
      * 
      */
-    private final class LocationListModel extends AbstractListModel<String> {
+    private static final class LocationListModel extends AbstractListModel<String> {
         private static final long serialVersionUID = 1L;
         String[] values = new String[] { "Local", "fs0.das4.cs.vu.nl", "fs1.das4.liacs.nl" };
 
@@ -152,12 +137,12 @@ public class OctopusExplorer extends JFrame {
 
     static class IconLabelCellRenderer extends JLabel implements ListCellRenderer<String> {
         private static final long serialVersionUID = 1L;
-        private ImageIcon homeIcon;
-        private ImageIcon remoteIcon;
+        private final ImageIcon homeIcon;
+        private final ImageIcon remoteIcon;
 
         IconLabelCellRenderer() {
-            homeIcon = loadIcon("places/user-home.png");
-            remoteIcon = loadIcon("places/network-server.png");
+            homeIcon = Utils.loadIcon("places/user-home.png");
+            remoteIcon = Utils.loadIcon("places/network-server.png");
             setOpaque(true);
             setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         }
@@ -210,11 +195,9 @@ public class OctopusExplorer extends JFrame {
         final JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         splitPane.setRightComponent(tabbedPane);
 
-        ImageIcon fileIcon = loadIcon("apps/system-file-manager.png");
-        tabbedPane.addTab("Files", fileIcon, fileListing, null);
+        tabbedPane.addTab("Files", Utils.loadIcon("apps/system-file-manager.png"), fileListing, null);
 
-        ImageIcon jobIcon = loadIcon("apps/accessories-calculator.png");
-        tabbedPane.addTab("Jobs", jobIcon, jobListing, null);
+        tabbedPane.addTab("Jobs", Utils.loadIcon("apps/accessories-calculator.png"), jobListing, null);
 
         JPanel panel = new JPanel();
         splitPane.setLeftComponent(panel);
@@ -238,15 +221,14 @@ public class OctopusExplorer extends JFrame {
         locationList.addMouseListener(new ListPopupMouseListener(popupMenu));
 
         JMenuItem mntmAddALocation = new JMenuItem("Add a Location");
-        ImageIcon remoteIcon = loadIcon("places/network-server.png");
+        ImageIcon remoteIcon = Utils.loadIcon("places/network-server.png");
         mntmAddALocation.setIcon(remoteIcon);
         popupMenu.add(mntmAddALocation);
 
         JPanel panel_1 = new JPanel();
         panel.add(panel_1, BorderLayout.SOUTH);
 
-        ImageIcon nlescIcon = loadIcon("nlesc-logo.png");
-        JLabel lblNlescLogo = new JLabel(nlescIcon);
+        JLabel lblNlescLogo = new JLabel(Utils.loadIcon("nlesc-logo.png"));
         panel_1.add(lblNlescLogo);
 
     }

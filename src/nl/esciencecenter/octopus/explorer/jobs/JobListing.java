@@ -20,37 +20,26 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
 import nl.esciencecenter.octopus.Octopus;
-import nl.esciencecenter.octopus.exceptions.OctopusException;
-import nl.esciencecenter.octopus.exceptions.OctopusIOException;
-import nl.esciencecenter.octopus.explorer.OctopusExplorer;
-import nl.esciencecenter.octopus.jobs.Job;
-import nl.esciencecenter.octopus.jobs.JobStatus;
-import nl.esciencecenter.octopus.jobs.Scheduler;
+import nl.esciencecenter.octopus.explorer.Utils;
 
 public class JobListing extends JPanel {
     private static final long serialVersionUID = 1L;
     private JTable table;
     private final Action refreshAction = new RefreshAction();
     private final DefaultTableModel theModel;
-    private UpdateListWorker currentTask = null;
+    private UpdateJobListWorker currentTask = null;
 
     private String currentLocation = "Local";
     private final Octopus octopus;
@@ -64,7 +53,7 @@ public class JobListing extends JPanel {
             currentTask.cancel(false);
         }
         theModel.setRowCount(0);
-        currentTask = new UpdateListWorker(theModel, currentLocation);
+        currentTask = new UpdateJobListWorker(theModel, currentLocation, octopus);
         currentTask.execute();
     }
 
@@ -104,54 +93,6 @@ public class JobListing extends JPanel {
         table.getColumnModel().getColumn(3).setPreferredWidth(100);
     }
 
-    class UpdateListWorker extends SwingWorker<List<JobStatus>, JobStatus> {
-        private final DefaultTableModel tableModel;
-        private final String location;
-
-        UpdateListWorker(DefaultTableModel tableModel, String location) {
-            this.tableModel = tableModel;
-            this.location = location;
-        }
-
-        @Override
-        public List<JobStatus> doInBackground() throws OctopusIOException, OctopusException, URISyntaxException {
-            String queue;
-            List<JobStatus> result = new LinkedList<JobStatus>();
-
-            Scheduler scheduler;
-            if (location.equals("Local")) {
-                scheduler = octopus.jobs().getLocalScheduler();
-                queue = "multiq";
-            } else {
-                scheduler = octopus.jobs().newScheduler(new URI("ge://" + location), null, null);
-                queue = "all.q";
-            }
-
-            Job[] jobs = octopus.jobs().getJobs(scheduler, queue);
-
-            for (int i = 0; i < jobs.length; i++) {
-                JobStatus status = octopus.jobs().getJobStatus(jobs[i]);
-
-                result.add(status);
-                publish(status);
-
-                setProgress((100 * i) / jobs.length);
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void process(List<JobStatus> chunks) {
-            for (JobStatus status : chunks) {
-                tableModel.addRow(new String[] { status.getJob().getIdentifier(), status.getState(),
-                        status.getSchedulerSpecficInformation().get("JB_owner"),
-                        status.getSchedulerSpecficInformation().get("slots") });
-
-            }
-        }
-    }
-
     private class RefreshAction extends AbstractAction {
         private static final long serialVersionUID = 1L;
 
@@ -159,8 +100,7 @@ public class JobListing extends JPanel {
             putValue(NAME, "Refresh");
             putValue(SHORT_DESCRIPTION, "Some short description");
 
-            Icon refreshIcon = OctopusExplorer.loadIcon("actions/view-refresh.png");
-            putValue(SMALL_ICON, refreshIcon);
+            putValue(SMALL_ICON, Utils.loadIcon("actions/view-refresh.png"));
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -168,7 +108,7 @@ public class JobListing extends JPanel {
                 currentTask.cancel(true);
             }
             theModel.setRowCount(0);
-            currentTask = new UpdateListWorker(theModel, currentLocation);
+            currentTask = new UpdateJobListWorker(theModel, currentLocation, octopus);
             currentTask.execute();
         }
     }

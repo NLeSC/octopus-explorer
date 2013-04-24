@@ -15,7 +15,7 @@
  */
 package nl.esciencecenter.octopus.explorer.files;
 
-import nl.esciencecenter.octopus.explorer.OctopusExplorer;
+import nl.esciencecenter.octopus.explorer.Utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -43,23 +43,23 @@ public class MimeTypeIcons {
     private static final Logger logger = LoggerFactory.getLogger(MimeTypeIcons.class);
 
     //all available icons
-    ImageIcon certificate = OctopusExplorer.loadIcon("mimetypes/application-certificate.png");
-    ImageIcon executable = OctopusExplorer.loadIcon("mimetypes/application-x-executable.png");
-    ImageIcon audio = OctopusExplorer.loadIcon("mimetypes/audio-x-generic.png");
-    ImageIcon font = OctopusExplorer.loadIcon("mimetypes/font-x-generic.png");
-    ImageIcon image = OctopusExplorer.loadIcon("mimetypes/image-x-generic.png");
-    ImageIcon archive = OctopusExplorer.loadIcon("mimetypes/package-x-generic.png");
-    ImageIcon html = OctopusExplorer.loadIcon("mimetypes/text-html.png");
-    ImageIcon text = OctopusExplorer.loadIcon("mimetypes/text-x-generic.png");
-    ImageIcon empty = OctopusExplorer.loadIcon("mimetypes/text-x-generic-template.png");
-    ImageIcon script = OctopusExplorer.loadIcon("mimetypes/text-x-script.png");
-    ImageIcon video = OctopusExplorer.loadIcon("mimetypes/video-x-generic.png");
-    ImageIcon addressBook = OctopusExplorer.loadIcon("mimetypes/x-office-address-book.png");
-    ImageIcon calendar = OctopusExplorer.loadIcon("mimetypes/x-office-calendar.png");
-    ImageIcon document = OctopusExplorer.loadIcon("mimetypes/x-office-document.png");
-    ImageIcon drawing = OctopusExplorer.loadIcon("mimetypes/x-office-drawing.png");
-    ImageIcon presentation = OctopusExplorer.loadIcon("mimetypes/x-office-presentation.png");
-    ImageIcon spreadsheet = OctopusExplorer.loadIcon("mimetypes/x-office-spreadsheet.png");
+    ImageIcon certificate = Utils.loadIcon("mimetypes/application-certificate.png");
+    ImageIcon executable = Utils.loadIcon("mimetypes/application-x-executable.png");
+    ImageIcon audio = Utils.loadIcon("mimetypes/audio-x-generic.png");
+    ImageIcon font = Utils.loadIcon("mimetypes/font-x-generic.png");
+    ImageIcon image = Utils.loadIcon("mimetypes/image-x-generic.png");
+    ImageIcon archive = Utils.loadIcon("mimetypes/package-x-generic.png");
+    ImageIcon html = Utils.loadIcon("mimetypes/text-html.png");
+    ImageIcon text = Utils.loadIcon("mimetypes/text-x-generic.png");
+    ImageIcon empty = Utils.loadIcon("mimetypes/text-x-generic-template.png");
+    ImageIcon script = Utils.loadIcon("mimetypes/text-x-script.png");
+    ImageIcon video = Utils.loadIcon("mimetypes/video-x-generic.png");
+    ImageIcon addressBook = Utils.loadIcon("mimetypes/x-office-address-book.png");
+    ImageIcon calendar = Utils.loadIcon("mimetypes/x-office-calendar.png");
+    ImageIcon document = Utils.loadIcon("mimetypes/x-office-document.png");
+    ImageIcon drawing = Utils.loadIcon("mimetypes/x-office-drawing.png");
+    ImageIcon presentation = Utils.loadIcon("mimetypes/x-office-presentation.png");
+    ImageIcon spreadsheet = Utils.loadIcon("mimetypes/x-office-spreadsheet.png");
 
     //Extension->Icon mappings
     private final Map<String, ImageIcon> icons;
@@ -166,7 +166,8 @@ public class MimeTypeIcons {
         InputStream in = getClass().getClassLoader().getResourceAsStream("resources/mime.types");
 
         if (in == null) {
-            throw new IOException("cannot get mime type list from classpath");
+            return;
+            //throw new IOException("cannot get mime type list from classpath");
         }
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {

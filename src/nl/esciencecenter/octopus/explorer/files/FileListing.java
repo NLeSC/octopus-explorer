@@ -15,19 +15,6 @@
  */
 package nl.esciencecenter.octopus.explorer.files;
 
-import nl.esciencecenter.octopus.Octopus;
-import nl.esciencecenter.octopus.credentials.Credential;
-import nl.esciencecenter.octopus.credentials.Credentials;
-import nl.esciencecenter.octopus.exceptions.AttributeNotSupportedException;
-import nl.esciencecenter.octopus.exceptions.OctopusException;
-import nl.esciencecenter.octopus.exceptions.OctopusIOException;
-import nl.esciencecenter.octopus.explorer.OctopusExplorer;
-import nl.esciencecenter.octopus.files.AbsolutePath;
-import nl.esciencecenter.octopus.files.DirectoryStream;
-import nl.esciencecenter.octopus.files.FileSystem;
-import nl.esciencecenter.octopus.files.PathAttributesPair;
-import nl.esciencecenter.octopus.files.RelativePath;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -38,11 +25,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -55,12 +37,17 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
-import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+
+import nl.esciencecenter.octopus.Octopus;
+import nl.esciencecenter.octopus.exceptions.AttributeNotSupportedException;
+import nl.esciencecenter.octopus.explorer.Utils;
+import nl.esciencecenter.octopus.files.PathAttributesPair;
+import nl.esciencecenter.octopus.files.RelativePath;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +59,7 @@ public class FileListing extends JPanel {
     private JTable table;
     private final Action refreshAction = new RefreshAction();
     private final DefaultTableModel theModel;
-    private UpdateListWorker currentTask = null;
+    private UpdateFileListWorker currentTask = null;
 
     private String currentLocation = "Local";
 
@@ -81,6 +68,7 @@ public class FileListing extends JPanel {
     private final Octopus octopus;
 
     private final Action action = new UpAction();
+    
 
     /**
      * @author Niels Drost
@@ -159,7 +147,7 @@ public class FileListing extends JPanel {
         private final MimeTypeIcons mimeTypeIcons;
 
         LabelRenderer() throws IOException {
-            folderIcon = OctopusExplorer.loadIcon("places/folder.png");
+            folderIcon = Utils.loadIcon("places/folder.png");
             mimeTypeIcons = new MimeTypeIcons();
         }
 
@@ -269,7 +257,7 @@ public class FileListing extends JPanel {
             currentTask.cancel(false);
         }
         theModel.setRowCount(0);
-        currentTask = new UpdateListWorker(theModel, currentLocation, currentPath, setPathToFSEntry);
+        currentTask = new UpdateFileListWorker(theModel, currentLocation, currentPath, setPathToFSEntry, octopus, this);
         currentTask.execute();
     }
 
@@ -283,7 +271,7 @@ public class FileListing extends JPanel {
      * 
      * @param path
      */
-    private void setCurrentPath(RelativePath path) {
+    void setCurrentPath(RelativePath path) {
         this.currentPath = path;
         logger.debug("current location: " + currentLocation + " current path(updated): " + currentPath);
     }
@@ -311,104 +299,6 @@ public class FileListing extends JPanel {
         logger.debug("current location: " + currentLocation + " current path(down): " + currentPath);
     }
 
-    /**
-     * Returns a RelativePath as result, and produces a RelativePath per File found at the given location+path
-     * 
-     * @author Niels Drost
-     * 
-     */
-    class UpdateListWorker extends SwingWorker<RelativePath, PathAttributesPair> {
-        private final DefaultTableModel tableModel;
-        private final String location;
-        private final RelativePath path;
-        private final boolean setPathToFSEntry;
-
-        UpdateListWorker(DefaultTableModel tableModel, String location, RelativePath path, boolean setPathToFSEntry) {
-            this.tableModel = tableModel;
-            this.location = location;
-            this.path = path;
-            this.setPathToFSEntry = setPathToFSEntry;
-        }
-
-        @Override
-        public RelativePath doInBackground() throws OctopusIOException, OctopusException, URISyntaxException {
-            FileSystem fileSystem;
-            if (location.equals("Local")) {
-                fileSystem = octopus.files().getLocalHomeFileSystem(null);
-            } else {
-                Credentials c = octopus.credentials();
-
-                //FIXME: only works for rsa keys, a bit explicit.
-                String username = System.getProperty("user.name");
-                Credential credential =
-                        c.newCertificateCredential("ssh", null, "/home/" + username + "/.ssh/id_rsa", "/home/" + username
-                                + "/.ssh/id_rsa.pub", username, "");
-
-                fileSystem = octopus.files().newFileSystem(new URI("ssh://" + location), credential, null);
-            }
-
-            RelativePath entryPath = fileSystem.getEntryPath();
-            AbsolutePath target;
-            if (setPathToFSEntry) {
-                target = octopus.files().newPath(fileSystem, entryPath);
-            } else {
-                target = octopus.files().newPath(fileSystem, path);
-            }
-
-            DirectoryStream<PathAttributesPair> stream = octopus.files().newAttributesDirectoryStream(target);
-
-            while (stream.iterator().hasNext()) {
-                PathAttributesPair pair = stream.iterator().next();
-                publish(pair);
-            }
-
-            octopus.files().close(fileSystem);
-
-            return entryPath;
-        }
-
-        @Override
-        protected void process(List<PathAttributesPair> chunks) {
-            for (PathAttributesPair pair : chunks) {
-
-                try {
-                    String size;
-                    String type;
-
-                    if (pair.attributes().isDirectory()) {
-                        size = "";
-                        type = "folder";
-                    } else {
-                        size = String.format("%.3f Mb", (pair.attributes().size() / 1000000f));
-                        type = "file";
-                    }
-
-                    String modified = new Date(pair.attributes().lastModifiedTime()).toString();
-
-                    if (!pair.attributes().isHidden()) {
-                        tableModel.addRow(new Object[] { pair, size, type, modified });
-                    }
-                } catch (AttributeNotSupportedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-
-            }
-        }
-
-        @Override
-        protected void done() {
-            //update path in main class / swing thread. 
-            if (!isCancelled() && setPathToFSEntry) {
-                try {
-                    setCurrentPath(get());
-                } catch (InterruptedException | ExecutionException e) {
-                    logger.error("Got error updating file listing", e);
-                }
-            }
-        }
-    }
-
     private class RefreshAction extends AbstractAction {
         private static final long serialVersionUID = 1L;
 
@@ -416,8 +306,7 @@ public class FileListing extends JPanel {
             putValue(NAME, "Refresh");
             putValue(SHORT_DESCRIPTION, "Some short description");
 
-            Icon refreshIcon = OctopusExplorer.loadIcon("actions/view-refresh.png");
-            putValue(SMALL_ICON, refreshIcon);
+            putValue(SMALL_ICON, Utils.loadIcon("actions/view-refresh.png"));
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -431,9 +320,8 @@ public class FileListing extends JPanel {
         public UpAction() {
             putValue(NAME, "Up");
             putValue(SHORT_DESCRIPTION, "Some short description");
-
-            Icon upIcon = OctopusExplorer.loadIcon("actions/go-up.png");
-            putValue(SMALL_ICON, upIcon);
+            
+            putValue(SMALL_ICON, Utils.loadIcon("actions/go-up.png"));
         }
 
         public void actionPerformed(ActionEvent e) {
