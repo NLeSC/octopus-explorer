@@ -180,7 +180,7 @@ public class OctopusExplorer extends JFrame {
         logger.debug("Initializing Octopus Explorer");
         setTitle("Octopus Explorer [Technology Preview]");
         Octopus octopus = OctopusFactory.newOctopus(null);
-        final JobListingPanel jobListing = new JobListingPanel(octopus);
+        final JobListingPanel jobListing = new JobListingPanel(octopus, this);
         final FileListingPanel fileListing = new FileListingPanel(octopus);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 965, 735);

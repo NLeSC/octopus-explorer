@@ -31,21 +31,31 @@
 		<javac srcdir="src" destdir="build/classes" debug="on">
 			<classpath refid="lib.jars" />
 		</javac>
-		
+
+		<!-- repack external libraries into single jar file -->
+
+		<jar jarfile="dist/external-libs.jar">
+			<zipgroupfileset dir="lib/">
+				<include name="**/*.jar" />
+			</zipgroupfileset>
+		</jar>
 
 		<!-- Put everything in classes into the jar file -->
 		<jar jarfile="dist/octopus-explorer${version}.jar" basedir="build/classes">
 			<manifest>
 				<attribute name="Main-Class" value="nl.esciencecenter.octopus.explorer.OctopusExplorer" />
-				<attribute name="Octopus-Adaptors" value="Core" />
 			</manifest>
-			<!-- repack libraries into jar -->
-			<zipgroupfileset dir="lib" includes="*.jar" /> 
+			<!-- add external libraries into jar, exclude META_INF -->
+			<zipfileset src="dist/external-libs.jar">
+				<exclude name="META-INF/**/*" />
+			</zipfileset>
+
 			<!-- add resources (icons, images, etc) to jar -->
-			<zipfileset dir="resources"/>
+			<zipfileset dir="resources" />
 			<!-- add "distribution" logback config to jar -->
-			<zipfileset file="logback-dist.xml" fullpath="logback.xml"/>
+			<zipfileset file="logback-dist.xml" fullpath="logback.xml" />
 		</jar>
+		<delete file="dist/external-libs.jar" />
 	</target>
 
 	<target name="clean" description="clean up">

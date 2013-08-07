@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -45,6 +46,10 @@ public class JobListingPanel extends JPanel {
     private final Action refreshAction;
     private final Action submitJobAction;
 
+    private final SubmitJobDialog dialog;
+
+    private final JFrame frame;
+
     public void setCurrentLocation(String location) {
         this.currentLocation = location;
     }
@@ -61,11 +66,13 @@ public class JobListingPanel extends JPanel {
     /**
      * Create the panel.
      */
-    public JobListingPanel(Octopus octopus) throws Exception {
+    public JobListingPanel(Octopus octopus, JFrame frame) throws Exception {
         this.octopus = octopus;
+        this.frame = frame;
 
         refreshAction = new RefreshAction();
         submitJobAction = new SubmitJobAction();
+        dialog = new SubmitJobDialog(frame, currentLocation, octopus);
 
         setLayout(new BorderLayout(0, 0));
 
@@ -132,6 +139,10 @@ public class JobListingPanel extends JPanel {
         }
 
         public void actionPerformed(ActionEvent e) {
+            dialog.setLocation(currentLocation);
+            dialog.setLocationRelativeTo(frame);
+            dialog.setVisible(true);
+            triggerRefresh(false);
         }
     }
 }
