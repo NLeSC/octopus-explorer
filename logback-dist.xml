@@ -12,6 +12,6 @@
     <appender-ref ref="stdout" />
   </root>
 
-  <logger name="nl.esciencecenter.octopus.explorer" level="info" />
+  <logger name="nl.esciencecenter.octopus" level="debug" />
 
 </configuration>

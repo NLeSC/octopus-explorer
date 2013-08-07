@@ -6,13 +6,9 @@
     <target>System.err</target>
   </appender>
 
-  <root level="warn">
+  <root level="debug">
     <appender-ref ref="STDERR" />
   </root>
 
-  <logger name="nl.esciencecenter.octopus.explorer" level="DEBUG" />
-
-  <!-- sends logs to logback-beagle -->
-  <consolePlugin />
-
+  <logger name="nl.esciencecenter.octopus" level="DEBUG" />
 </configuration>

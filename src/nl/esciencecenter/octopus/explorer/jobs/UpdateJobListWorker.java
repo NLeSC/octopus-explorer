@@ -8,6 +8,9 @@ import java.util.List;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import nl.esciencecenter.octopus.Octopus;
 import nl.esciencecenter.octopus.exceptions.OctopusException;
 import nl.esciencecenter.octopus.exceptions.OctopusIOException;
@@ -21,6 +24,9 @@ import nl.esciencecenter.octopus.jobs.Scheduler;
  *
  */
 class UpdateJobListWorker extends SwingWorker<List<JobStatus>, JobStatus> {
+    
+    private static final Logger logger = LoggerFactory.getLogger(UpdateJobListWorker.class);
+    
     private final DefaultTableModel tableModel;
     private final String location;
     private final Octopus octopus;
@@ -45,13 +51,19 @@ class UpdateJobListWorker extends SwingWorker<List<JobStatus>, JobStatus> {
             queue = "all.q";
         }
 
+        logger.debug("Got scheduler {}", scheduler);
+        
         Job[] jobs = octopus.jobs().getJobs(scheduler, queue);
+        
+        logger.debug("Got list of jobs of length {}", jobs.length);
+        
+        JobStatus[] statuses = octopus.jobs().getJobStatuses(jobs);
+        
+        logger.debug("Got list of statuses of length {}", statuses.length);
 
         for (int i = 0; i < jobs.length; i++) {
-            JobStatus status = octopus.jobs().getJobStatus(jobs[i]);
-
-            result.add(status);
-            publish(status);
+            result.add(statuses[i]);
+            publish(statuses[i]);
 
             setProgress((100 * i) / jobs.length);
         }

@@ -9,12 +9,8 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import nl.esciencecenter.octopus.Octopus;
 import nl.esciencecenter.octopus.credentials.Credential;
-import nl.esciencecenter.octopus.credentials.Credentials;
 import nl.esciencecenter.octopus.exceptions.AttributeNotSupportedException;
 import nl.esciencecenter.octopus.exceptions.OctopusException;
 import nl.esciencecenter.octopus.exceptions.OctopusIOException;
@@ -24,6 +20,9 @@ import nl.esciencecenter.octopus.files.FileSystem;
 import nl.esciencecenter.octopus.files.PathAttributesPair;
 import nl.esciencecenter.octopus.files.RelativePath;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Returns a RelativePath as result, and produces a RelativePath per File found at the given location+path
  * 
@@ -31,7 +30,7 @@ import nl.esciencecenter.octopus.files.RelativePath;
  * 
  */
 class UpdateFileListWorker extends SwingWorker<RelativePath, PathAttributesPair> {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(UpdateFileListWorker.class);
 
     private final DefaultTableModel tableModel;
@@ -41,7 +40,8 @@ class UpdateFileListWorker extends SwingWorker<RelativePath, PathAttributesPair>
     private final Octopus octopus;
     private final FileListingPanel fileListing;
 
-    UpdateFileListWorker(DefaultTableModel tableModel, String location, RelativePath path, boolean setPathToFSEntry, Octopus octopus, FileListingPanel fileListing) {
+    UpdateFileListWorker(DefaultTableModel tableModel, String location, RelativePath path, boolean setPathToFSEntry,
+            Octopus octopus, FileListingPanel fileListing) {
         this.tableModel = tableModel;
         this.location = location;
         this.path = path;
@@ -53,24 +53,22 @@ class UpdateFileListWorker extends SwingWorker<RelativePath, PathAttributesPair>
     @Override
     public RelativePath doInBackground() throws OctopusIOException, OctopusException, URISyntaxException {
         FileSystem fileSystem;
-        if (location.equals("Local")) {
-            fileSystem = octopus.files().getLocalHomeFileSystem(null);
-        } else {
-            Credentials c = octopus.credentials();
+        logger.debug("getting file list at {}", location);
 
-            //FIXME: only works for rsa keys, too explicit.
-            String username = System.getProperty("user.name");
-            Credential credential =
-                    c.newCertificateCredential("ssh", null, "/home/" + username + "/.ssh/id_rsa", "/home/" + username
-                            + "/.ssh/id_rsa.pub", username, "");
+        if (location.equals("Local")) {
+            fileSystem = octopus.files().getLocalHomeFileSystem();
+        } else {
+            Credential credential = octopus.credentials().getDefaultCredential("ssh");
 
             fileSystem = octopus.files().newFileSystem(new URI("ssh://" + location), credential, null);
         }
 
-        RelativePath entryPath = fileSystem.getEntryPath();
+        logger.debug("got filesystem {}", fileSystem);
+
+        AbsolutePath entryPath = fileSystem.getEntryPath();
         AbsolutePath target;
         if (setPathToFSEntry) {
-            target = octopus.files().newPath(fileSystem, entryPath);
+            target = entryPath;
         } else {
             target = octopus.files().newPath(fileSystem, path);
         }
@@ -79,15 +77,15 @@ class UpdateFileListWorker extends SwingWorker<RelativePath, PathAttributesPair>
 
         while (stream.iterator().hasNext()) {
             PathAttributesPair pair = stream.iterator().next();
+            logger.debug("got file {}", pair.path());
             publish(pair);
         }
 
         octopus.files().close(fileSystem);
 
-        return entryPath;
+        return entryPath.getRelativePath();
     }
-    
-    
+
     @Override
     protected void process(List<PathAttributesPair> chunks) {
         for (PathAttributesPair pair : chunks) {
